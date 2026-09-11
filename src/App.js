@@ -196,8 +196,12 @@ export default function LifeInsuranceLeads() {
         <div className="bg-white rounded-lg shadow-lg overflow-hidden">
           <div className="grid md:grid-cols-2 gap-8 items-center p-8 md:p-12">
             <div className="flex justify-center">
-              <div className="w-full max-w-sm bg-gray-200 h-96 rounded-lg flex items-center justify-center text-gray-500">
-                📸 Bianca Elena GAMAN
+              <div className="w-full max-w-sm">
+                <img 
+                  src="/images/bianca.jpg" 
+                  alt="Bianca Elena GAMAN"
+                  className="w-full h-auto rounded-lg shadow-lg object-cover"
+                />
               </div>
             </div>
 
@@ -261,4 +265,4 @@ export default function LifeInsuranceLeads() {
       </div>
     </div>
   );
-}// updated
+}
