@@ -245,7 +245,9 @@ export default function LifeInsuranceLeads() {
                     <p className="text-gray-700">
                       <span className="font-semibold">Phone:</span> <a href="tel:7276378123" className="text-blue-600 hover:underline">(727) 637-8123</a>
                     </p>
-                    <p className="text-sm text-gray-600">
+                    <p className="text-gray-700">
+  <span className="font-semibold">Email:</span> <a href="mailto:bianca@lifeinsurancebianca.com" className="text-blue-600 hover:underline">bianca@lifeinsurancebianca.com</a>
+</p><p className="text-sm text-gray-600">
                       Call anytime to discuss your life insurance needs or get a quick quote.
                     </p>
                   </div>
