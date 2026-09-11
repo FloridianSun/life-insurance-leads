@@ -20,7 +20,7 @@ export default function LifeInsuranceLeads() {
         <div className="grid md:grid-cols-2 gap-12 items-center">
           <div>
             <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-              Protect Your Family's Future
+              Affordable Life Insurance Protection for Your Family
             </h1>
             <p className="text-xl text-gray-600 mb-6">
               Affordable life insurance plans tailored to your needs. Get a personalized quote in minutes.
