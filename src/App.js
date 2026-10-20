@@ -179,6 +179,7 @@ export default function LifeInsuranceLeads() {
 
                 <p className="text-xs text-gray-500 text-center">
                   We respect your privacy. Your information is secure and will only be used to contact you about your quote.
+                  See our <a href="/privacy.html" className="underline hover:text-blue-600">Privacy Policy</a>.
                 </p>
               </form>
             )}
@@ -261,8 +262,12 @@ export default function LifeInsuranceLeads() {
       {/* Footer */}
       <div className="bg-gray-100 border-t mt-20">
         <div className="max-w-6xl mx-auto px-4 py-8 text-center text-gray-600 text-sm">
-          <p>&copy; 2024 LifeSecure Insurance. All rights reserved.</p>
-          <p className="mt-2">Licensed Insurance Agent | Privacy Policy | Terms of Service</p>
+          <p>&copy; {new Date().getFullYear()} Bianca Gaman – Life Insurance. All rights reserved.</p>
+          <p className="mt-2">
+            Licensed Insurance Agent |{' '}
+            <a href="/privacy.html" className="hover:text-blue-600 hover:underline">Privacy Policy</a> |{' '}
+            <a href="/terms.html" className="hover:text-blue-600 hover:underline">Terms of Service</a>
+          </p>
         </div>
       </div>
     </div>
