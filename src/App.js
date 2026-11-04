@@ -1,6 +1,42 @@
 import React, { useEffect } from 'react';
 import { useForm, ValidationError } from '@formspree/react';
-import { Send, Heart, DollarSign, Clock, AlertCircle } from 'lucide-react';
+import {
+  Send, Heart, DollarSign, Clock, AlertCircle,
+  Shield, Infinity as InfinityIcon, TrendingUp, Home, Medal,
+} from 'lucide-react';
+
+const coverageOptions = [
+  {
+    icon: Shield,
+    color: 'text-blue-600',
+    title: 'Term Life Insurance',
+    text: 'Affordable coverage for a set number of years, such as while your kids are growing up or you are paying off debts.',
+  },
+  {
+    icon: InfinityIcon,
+    color: 'text-indigo-600',
+    title: 'Whole Life Insurance',
+    text: 'Lifelong coverage with fixed premiums that also builds cash value over time.',
+  },
+  {
+    icon: TrendingUp,
+    color: 'text-green-600',
+    title: 'Universal Life Insurance',
+    text: 'Lifelong coverage with flexible premiums and a death benefit you can adjust as your needs change.',
+  },
+  {
+    icon: Home,
+    color: 'text-orange-600',
+    title: 'Mortgage Protection',
+    text: 'Life insurance that helps your family pay off or keep up with the mortgage, so they can stay in their home if something happens to you.',
+  },
+  {
+    icon: Medal,
+    color: 'text-red-600',
+    title: 'Veterans & Military Families',
+    text: 'Coverage options for veterans and their families, including plans that can add to or replace coverage after leaving the service.',
+  },
+];
 
 export default function LifeInsuranceLeads() {
   const [state, handleSubmit] = useForm('xgaeerbo');
@@ -59,7 +95,7 @@ export default function LifeInsuranceLeads() {
           </div>
 
           {/* Lead Form */}
-          <div className="bg-white rounded-lg shadow-lg p-8">
+          <div id="quote" className="bg-white rounded-lg shadow-lg p-8 scroll-mt-6">
             <h2 className="text-2xl font-bold text-gray-900 mb-6">Get Your Free Quote</h2>
             
             {state.succeeded ? (
@@ -157,6 +193,8 @@ export default function LifeInsuranceLeads() {
                     <option value="term-life">Term Life Insurance</option>
                     <option value="whole-life">Whole Life Insurance</option>
                     <option value="universal-life">Universal Life Insurance</option>
+                    <option value="mortgage-protection">Mortgage Protection</option>
+                    <option value="veterans">Coverage for Veterans &amp; Military Families</option>
                     <option value="not-sure">Not Sure Yet</option>
                   </select>
                   <ValidationError field="interestedIn" errors={state.errors} className="text-xs text-red-600 mt-1" />
@@ -193,6 +231,31 @@ export default function LifeInsuranceLeads() {
             )}
           </div>
         </div>
+      </div>
+
+      {/* Coverage Options */}
+      <div className="max-w-6xl mx-auto px-4 pt-8 md:pt-12">
+        <div className="text-center mb-10">
+          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Coverage Options</h2>
+          <p className="text-lg text-gray-600">Find the right protection for your family, your home and your future</p>
+        </div>
+
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {coverageOptions.map(({ icon: Icon, color, title, text }) => (
+            <div key={title} className="bg-white rounded-lg shadow p-6 flex flex-col">
+              <Icon className={`${color} mb-3`} size={28} />
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">{title}</h3>
+              <p className="text-gray-600 text-sm flex-1">{text}</p>
+              <a href="#quote" className="mt-4 text-blue-600 font-semibold text-sm hover:underline">
+                Get a free quote &rarr;
+              </a>
+            </div>
+          ))}
+        </div>
+
+        <p className="text-xs text-gray-500 text-center mt-6">
+          Not affiliated with or endorsed by the U.S. Department of Veterans Affairs or any government agency.
+        </p>
       </div>
 
       {/* About Us Section */}
