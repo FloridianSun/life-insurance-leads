@@ -1,9 +1,17 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useForm, ValidationError } from '@formspree/react';
 import { Send, Heart, DollarSign, Clock, AlertCircle } from 'lucide-react';
 
 export default function LifeInsuranceLeads() {
   const [state, handleSubmit] = useForm('xgaeerbo');
+
+  // Send people to a dedicated thank-you page after a successful submit,
+  // so Google Ads can count each lead as a visit to that URL.
+  useEffect(() => {
+    if (state.succeeded) {
+      window.location.assign('/thank-you.html');
+    }
+  }, [state.succeeded]);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white">
