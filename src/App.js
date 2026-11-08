@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useForm, ValidationError } from '@formspree/react';
 import {
   Send, Heart, DollarSign, Clock, AlertCircle,
@@ -38,8 +38,68 @@ const coverageOptions = [
   },
 ];
 
+// Statele în care se poate trimite formularul. Illinois apare în listă ca să
+// vedem un mesaj clar, dar formularul nu se trimite pentru el.
+const US_STATES = [
+  ['AL', 'Alabama'], ['AK', 'Alaska'], ['AZ', 'Arizona'], ['AR', 'Arkansas'],
+  ['CA', 'California'], ['CO', 'Colorado'], ['CT', 'Connecticut'], ['DE', 'Delaware'],
+  ['DC', 'District of Columbia'], ['FL', 'Florida'], ['GA', 'Georgia'], ['HI', 'Hawaii'],
+  ['ID', 'Idaho'], ['IL', 'Illinois'], ['IN', 'Indiana'], ['IA', 'Iowa'],
+  ['KS', 'Kansas'], ['KY', 'Kentucky'], ['LA', 'Louisiana'], ['ME', 'Maine'],
+  ['MD', 'Maryland'], ['MA', 'Massachusetts'], ['MI', 'Michigan'], ['MN', 'Minnesota'],
+  ['MS', 'Mississippi'], ['MO', 'Missouri'], ['MT', 'Montana'], ['NE', 'Nebraska'],
+  ['NV', 'Nevada'], ['NH', 'New Hampshire'], ['NJ', 'New Jersey'], ['NM', 'New Mexico'],
+  ['NY', 'New York'], ['NC', 'North Carolina'], ['ND', 'North Dakota'], ['OH', 'Ohio'],
+  ['OK', 'Oklahoma'], ['OR', 'Oregon'], ['PA', 'Pennsylvania'], ['RI', 'Rhode Island'],
+  ['SC', 'South Carolina'], ['SD', 'South Dakota'], ['TN', 'Tennessee'], ['TX', 'Texas'],
+  ['UT', 'Utah'], ['VT', 'Vermont'], ['VA', 'Virginia'], ['WA', 'Washington'],
+  ['WV', 'West Virginia'], ['WI', 'Wisconsin'], ['WY', 'Wyoming'],
+];
+
+// Textul exact de consimțământ. Se afișează lângă checkbox ȘI se trimite la
+// Formspree, ca să avem dovada a ce a acceptat fiecare persoană.
+// Dacă schimbi textul, crește și CONSENT_VERSION.
+const CONSENT_VERSION = 'consent_v1';
+const CONSENT_TEXT =
+  'I agree that Bianca Elena Gaman, a licensed insurance agent, may contact me by phone or email about my quote request. I understand that agreeing is not required to receive information.';
+
+const UTM_KEYS = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term'];
+
 export default function LifeInsuranceLeads() {
   const [state, handleSubmit] = useForm('xgaeerbo');
+  const [selectedState, setSelectedState] = useState('');
+  const [utm, setUtm] = useState({});
+  const isIllinois = selectedState === 'IL';
+
+  // Citește parametrii UTM din adresa paginii (din ce reclamă a venit omul) și
+  // îi ține minte pe durata vizitei, ca să nu se piardă dacă navighează prin site.
+  useEffect(() => {
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const found = {};
+      UTM_KEYS.forEach((k) => {
+        if (params.get(k)) found[k] = params.get(k);
+      });
+      if (Object.keys(found).length > 0) {
+        window.sessionStorage.setItem('utm', JSON.stringify(found));
+        setUtm(found);
+      } else {
+        const saved = window.sessionStorage.getItem('utm');
+        if (saved) setUtm(JSON.parse(saved));
+      }
+    } catch (e) {
+      // Dacă browserul blochează stocarea, formularul merge oricum, fără UTM.
+    }
+  }, []);
+
+  // Illinois: nu trimitem datele nicăieri.
+  const onSubmit = (e) => {
+    if (isIllinois) {
+      e.preventDefault();
+      return;
+    }
+    handleSubmit(e);
+  };
 
   // Send people to a dedicated thank-you page after a successful submit,
   // so Google Ads can count each lead as a visit to that URL.
@@ -81,14 +141,17 @@ export default function LifeInsuranceLeads() {
                 <DollarSign className="text-green-500 flex-shrink-0 mt-1" size={24} />
                 <div>
                   <h3 className="font-semibold text-gray-900">Affordable Rates</h3>
-                  <p className="text-gray-600 text-sm">Plans starting from just $15/month</p>
+                  <p className="text-gray-600 text-sm">Plans starting from about $15/month*</p>
+                  <p className="text-gray-500 text-xs mt-1">
+                    *Example rate only. Your actual rate depends on your age, health, coverage amount and the carrier.
+                  </p>
                 </div>
               </div>
               <div className="flex gap-3 items-start">
                 <Clock className="text-blue-500 flex-shrink-0 mt-1" size={24} />
                 <div>
                   <h3 className="font-semibold text-gray-900">Quick Process</h3>
-                  <p className="text-gray-600 text-sm">Get approved and covered in days, not weeks</p>
+                  <p className="text-gray-600 text-sm">Many applicants receive a decision within days. Approval is not guaranteed and depends on the carrier's underwriting.</p>
                 </div>
               </div>
             </div>
@@ -106,7 +169,7 @@ export default function LifeInsuranceLeads() {
                 </p>
               </div>
             ) : (
-              <form onSubmit={handleSubmit} className="space-y-4">
+              <form onSubmit={onSubmit} className="space-y-4">
                 {state.errors && state.errors.length > 0 && (
                   <div className="bg-red-50 border border-red-200 rounded-lg p-4 flex gap-3">
                     <AlertCircle className="text-red-600 flex-shrink-0 mt-0.5" size={20} />
@@ -180,6 +243,31 @@ export default function LifeInsuranceLeads() {
                 </div>
 
                 <div>
+                  <label htmlFor="state" className="block text-sm font-medium text-gray-700 mb-1">
+                    State *
+                  </label>
+                  <select
+                    id="state"
+                    name="state"
+                    required
+                    value={selectedState}
+                    onChange={(e) => setSelectedState(e.target.value)}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  >
+                    <option value="">-- Select your state --</option>
+                    {US_STATES.map(([code, name]) => (
+                      <option key={code} value={code}>{name}</option>
+                    ))}
+                  </select>
+                  {isIllinois && (
+                    <p role="alert" className="text-sm text-red-700 bg-red-50 border border-red-200 rounded-lg p-3 mt-2">
+                      Sorry, we are not able to offer life insurance in Illinois at this time, so we can't accept a request from this state.
+                    </p>
+                  )}
+                  <ValidationError field="state" errors={state.errors} className="text-xs text-red-600 mt-1" />
+                </div>
+
+                <div>
                   <label htmlFor="interestedIn" className="block text-sm font-medium text-gray-700 mb-1">
                     Interested In *
                   </label>
@@ -211,12 +299,40 @@ export default function LifeInsuranceLeads() {
                     placeholder="Tell us about your insurance needs..."
                     rows="3"
                   />
+                  <p className="text-xs text-gray-500 mt-1">
+                    Please do not include medical details or Social Security numbers here.
+                  </p>
                   <ValidationError field="message" errors={state.errors} className="text-xs text-red-600 mt-1" />
                 </div>
 
+                <div className="flex gap-3 items-start">
+                  <input
+                    type="checkbox"
+                    id="consent"
+                    name="consent"
+                    value="yes"
+                    required
+                    className="mt-1 h-4 w-4 flex-shrink-0"
+                  />
+                  <label htmlFor="consent" className="text-xs text-gray-600">
+                    {CONSENT_TEXT} See our{' '}
+                    <a href="/privacy.html" className="underline hover:text-blue-600">Privacy Policy</a> and{' '}
+                    <a href="/terms.html" className="underline hover:text-blue-600">Terms of Service</a>. *
+                  </label>
+                </div>
+                <ValidationError field="consent" errors={state.errors} className="text-xs text-red-600 mt-1" />
+
+                {/* Câmpuri ascunse: dovada consimțământului + de unde a venit omul */}
+                <input type="hidden" name="consent_version" value={CONSENT_VERSION} />
+                <input type="hidden" name="consent_text" value={CONSENT_TEXT} />
+                <input type="hidden" name="page_url" value={typeof window !== 'undefined' ? window.location.href.split('#')[0] : ''} />
+                {UTM_KEYS.map((k) => (
+                  <input key={k} type="hidden" name={k} value={utm[k] || ''} />
+                ))}
+
                 <button
                   type="submit"
-                  disabled={state.submitting}
+                  disabled={state.submitting || isIllinois}
                   className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg flex items-center justify-center gap-2 transition-colors disabled:bg-gray-400"
                 >
                   <Send size={18} />
@@ -334,6 +450,9 @@ export default function LifeInsuranceLeads() {
       <div className="bg-gray-100 border-t mt-20">
         <div className="max-w-6xl mx-auto px-4 py-8 text-center text-gray-600 text-sm">
           <p>&copy; {new Date().getFullYear()} Bianca Gaman – Life Insurance. All rights reserved.</p>
+          <p className="mt-2">
+            Insurance products are offered only in states where the agent is licensed. Not available in Illinois.
+          </p>
           <p className="mt-2">
             Licensed Insurance Agent |{' '}
             <a href="/privacy.html" className="hover:text-blue-600 hover:underline">Privacy Policy</a> |{' '}
